@@ -40,6 +40,8 @@ class Fichier < ActiveRecord::Base
         resized_image.write(self.absolute_filename)
       rescue
         return false
+      ensure
+        self.saved_image = nil
       end
     end
 end
