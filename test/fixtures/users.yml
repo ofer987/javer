@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+admin:
+  user_type_id: admin
+  password_digest: <%= BCrypt::Password.create('hello') %>
+  first_name: root
+  last_name: empty
+
+dan:
+  user_type_id: member
+  password_digest: <%= BCrypt::Password.create('foo') %>
+  first_name: Dan
+  last_name: Ofer
