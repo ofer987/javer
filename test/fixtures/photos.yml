@@ -1,15 +1,15 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
 building:
-  user_id: dan
-  title: 'The Empire State Building'
+  user: dan
+  name: 'The Empire State Building'
   description: MyText
   filename: 'building.jpg'
   taken_at: 2013-09-18 23:30:30
 
 ninja:
-  user_id: dan
-  title: 'A Scary Ninja'
+  user: dan
+  name: 'A Scary Ninja'
   description: 'How I Met Your Mother'
   filename: 'ninja.jpg'
   taken_at: 2013-09-18 23:30:30

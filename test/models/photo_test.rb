@@ -18,7 +18,7 @@ class PhotoTest < ActiveSupport::TestCase
   test 'photo should have a filename' do
     photo = new_valid_photo
 
-    photo.filename = nil
+    photo.filename = ''
     assert !photo.valid?, 'photo.filename should not be nil'
   end
 
@@ -53,7 +53,7 @@ class PhotoTest < ActiveSupport::TestCase
   private
     def new_valid_photo
       Photo.new do |photo|
-        photo.title = "New Title"
+        photo.name= "New Name"
         photo.description = 'New Description'
         photo.filename = 'new.jpg'
         photo.taken_at = DateTime.current # UTC

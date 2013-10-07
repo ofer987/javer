@@ -1,9 +1,14 @@
 Javer::Application.routes.draw do
-  resources :photos
+  get "sessions/new"
+  get "sessions/create"
+  get "sessions/destroy"
 
-  resources :users
+  resources :users do
+    resources :photos
+  end
 
   root controller: :users, action: :index
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

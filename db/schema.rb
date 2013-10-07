@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130925034609) do
+ActiveRecord::Schema.define(version: 20131006014010) do
 
   create_table "fichiers", force: true do |t|
     t.integer  "photo_id"
@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 20130925034609) do
 
   create_table "photos", force: true do |t|
     t.integer  "user_id"
-    t.string   "title",       default: "", null: false
+    t.string   "name",        default: "", null: false
     t.text     "description", default: "", null: false
     t.string   "filename",                 null: false
     t.datetime "taken_at"
@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 20130925034609) do
     t.string   "last_name",       default: "", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "username"
   end
 
   add_index "users", ["user_type_id"], name: "index_users_on_user_type_id"

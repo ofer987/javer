@@ -1,5 +1,7 @@
 class PhotosController < ApplicationController
+  before_action :set_user
   before_action :set_photo, only: [:show, :edit, :update, :destroy]
+  skip_before_action :authenticate, only: [:index, :show]
 
   # GET /photos
   # GET /photos.json
@@ -24,11 +26,12 @@ class PhotosController < ApplicationController
   # POST /photos
   # POST /photos.json
   def create
-    @photo = Photo.new(photo_params)
+    @user = User.find_by_id user_params[:user_id]
+    @photo = @user.photos.build photo_params
 
     respond_to do |format|
       if @photo.save
-        format.html { redirect_to @photo, notice: 'Photo was successfully created.' }
+        format.html { redirect_to [@user, @photo], notice: 'Photo was successfully created.' }
         format.json { render action: 'show', status: :created, location: @photo }
       else
         format.html { render action: 'new' }
@@ -42,7 +45,7 @@ class PhotosController < ApplicationController
   def update
     respond_to do |format|
       if @photo.update(photo_params)
-        format.html { redirect_to @photo, notice: 'Photo was successfully updated.' }
+        format.html { redirect_to [@user, @photo], notice: 'Photo was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -56,19 +59,27 @@ class PhotosController < ApplicationController
   def destroy
     @photo.destroy
     respond_to do |format|
-      format.html { redirect_to photos_url }
+      format.html { redirect_to user_photos_url(@user) }
       format.json { head :no_content }
     end
   end
 
   private
+    def set_user
+      @user = User.find user_params[:user_id]
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_photo
-      @photo = Photo.find(params[:id])
+      @photo = Photo.find params[:id]
+    end
+
+    def user_params
+      params.permit :user_id
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def photo_params
-      params.require(:photo).permit(:user_id, :title, :description, :filename, :taken_at)
+      params.require(:photo).permit(:name, :description, :load_photo_file)
     end
 end

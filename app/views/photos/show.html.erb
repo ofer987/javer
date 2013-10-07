@@ -7,7 +7,7 @@
 
 <p>
   <strong>Title:</strong>
-  <%= @photo.title %>
+  <%= @photo.name %>
 </p>
 
 <p>
@@ -25,5 +25,5 @@
   <%= @photo.taken_at %>
 </p>
 
-<%= link_to 'Edit', edit_photo_path(@photo) %> |
-<%= link_to 'Back', photos_path %>
+<%= link_to 'Edit', edit_user_photo_path(@user, @photo) %> |
+<%= link_to 'Back', user_photos_path(@user) %>

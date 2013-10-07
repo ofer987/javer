@@ -12,6 +12,8 @@ class User < ActiveRecord::Base
   belongs_to :user_type
   has_one :member, :class_name => 'UserTypes::Member'
 
+  has_many :photos
+
   validates_presence_of :id, on: :update
   validates_presence_of :first_name, :last_name, :user_type_id
 

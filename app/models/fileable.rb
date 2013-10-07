@@ -23,32 +23,6 @@ module Fileable
       @photo_data = data
     end
 
-    private
-
-    def write_file
-      # Validation
-      if @photo_data == nil
-        return false
-      end
-
-      # Load the image
-      begin
-        @saved_image = Magick::ImageList.new(@photo_data.tempfile)
-      rescue
-        return false
-      end
-
-      # Set the metadata
-      set_metadata
-
-      # Create files of different sizes and fichier relationships
-      set_fichiers
-
-      # Clear the image data from application memory
-      @photo_data = nil
-      #@saved_image = nil
-    end
-
     def filename=(new_filename)
       /^([^\.]+)\.(jpg|png)/i =~ new_filename
       new_filename_simple = $1
@@ -69,6 +43,36 @@ module Fileable
       end
 
       self[:filename] = new_filename
+    end
+
+    private
+
+    def before_update
+      write_file unless @photo_data.nil?
+    end
+
+    def before_create
+      return false if @photo_data.nil?
+
+      write_file
+    end
+
+    def write_file
+      # Load the image
+      begin
+        @saved_image = Magick::ImageList.new(@photo_data.tempfile)
+      rescue
+        return false
+      end
+
+      # Set the metadata
+      set_metadata
+
+      # Create files of different sizes and fichier relationships
+      set_fichiers
+
+      # Clear the image data from application memory
+      @photo_data = nil
     end
 
     def set_metadata
@@ -123,7 +127,8 @@ module Fileable
 
     receiver.class_eval do
       before_validation :init_taken_at
-      before_save :write_file
+      before_create :before_create
+      before_update :before_update
 
       #validates :validate_has_unique_fichiers
     end

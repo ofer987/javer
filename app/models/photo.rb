@@ -1,7 +1,7 @@
 class Photo < ActiveRecord::Base
   # id: primary key, not null, auto increment
   # user_id: foreign key, not null
-  # title: nvarchar(255), not null, default: ''
+  # name: nvarchar(255), not null, default: ''
   # description: nvarchar(255), not null, default: ''
   # filename: nvarchar(255), not null
   # taken_at: datetime, null
@@ -16,8 +16,8 @@ class Photo < ActiveRecord::Base
   validates_presence_of :user_id
   #validates_associated :user
 
-  #validates_length_of :title, minimum: 0, allow_nil: false
-  #validates :title, :presence: true, allow_blank: true, allow_nil: false
+  #validates_length_of :name, minimum: 0, allow_nil: false
+  #validates :name, :presence: true, allow_blank: true, allow_nil: false
   #validates :description, presence: true, allow_blank: true, allow_nil: false
 
   validates_presence_of :filename, :taken_at
