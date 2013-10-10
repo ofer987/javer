@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
 
   has_secure_password
 
+  scope :member, -> { where(user_type: UserType["member"]) }
+
   belongs_to :user_type
   has_one :member, :class_name => 'UserTypes::Member'
 

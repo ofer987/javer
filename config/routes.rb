@@ -1,4 +1,6 @@
 Javer::Application.routes.draw do
+  get "member_viewer/all"
+  
   get "member_signup/new"
   post "member_signup/create"
   
@@ -10,7 +12,7 @@ Javer::Application.routes.draw do
     resources :photos
   end
 
-  root controller: :users, action: :index
+  root controller: :member_viewer, action: :all
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
