@@ -1,7 +1,13 @@
 module Lookupable
   module ClassMethods
     def [](name)
-      self.where(["lower(name) = ?", name.to_s.strip.downcase]).first
+      if name.is_a? self
+        self
+      elsif name.is_a? Integer
+        self.where(["id = ?", id]).first
+      else
+        self.where(["lower(name) = ?", name.to_s.strip.downcase]).first
+      end
     end
 
     def find_by_name(name)

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class FilesizeTypeTest < ActiveSupport::TestCase
+class PhotosizeTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

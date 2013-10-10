@@ -10,28 +10,6 @@ class Photo
 end
 
 class FileableTest < ActiveSupport::TestCase
-  class PhotoDummy
-    # Imitate ActiveRecord::Base
-    include ActiveRecord::Callbacks
-    include ActiveModel::Validations::ClassMethods
-    include ActiveRecord::Transactions
-    include ActiveRecord::Associations::ClassMethods
-
-    #has_many :fichiers
-
-    include Fileable
-
-    def initialize
-    end
-
-    # required properties by Fileable
-    def photo_store
-      IMAGE_DESTINATION_FOLDER
-    end
-
-    attr_accessor :filename, :taken_at
-  end
-
   setup do
     # Remove the images subdir
     FileUtils.rm_rf(IMAGE_DESTINATION_FOLDER)
@@ -48,7 +26,7 @@ class FileableTest < ActiveSupport::TestCase
   end
 
   test 'should be able to write the file to disk' do
-    photo = Photo.new(user: users(:dan))
+    photo = Photo.new(user: users(:dan), name: 'New Photo')
     photo.load_photo_file = photo_data
 
     photo.save
@@ -58,12 +36,12 @@ class FileableTest < ActiveSupport::TestCase
 
     photo.fichiers.each do |fichier|
       assert IMAGE_DESTINATION_FOLDER.opendir.any? { |file| file == fichier.filename },
-             "Could not find the file (#{fichier.filename}) for filesize_type=#{fichier.filesize_type.name}"
+             "Could not find the file (#{fichier.filename}) for photosize=#{fichier.photosize.name}"
     end
   end
 
   test 'should reject file that does not exist' do
-    photo = Photo.new(user: users(:dan))
+    photo = Photo.new(user: users(:dan), name: 'New Photo')
     photo.load_photo_file = not_existing_photo_data
     photo.save
 
@@ -71,7 +49,7 @@ class FileableTest < ActiveSupport::TestCase
   end
 
   test 'should reject non-image filename' do
-    photo = Photo.new(user: users(:dan))
+    photo = Photo.new(user: users(:dan), name: 'New Photo')
     photo.load_photo_file = non_image_photo_data
 
     assert !photo.valid?, "#{photo.errors.full_messages}"

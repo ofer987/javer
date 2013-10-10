@@ -1,12 +1,12 @@
 class Fichier < ActiveRecord::Base
   # id: primary key, not null, auto increment
   # photo_id: foreign key, integer, not null
-  # filesize_type_id: foreign key, integer, not null
+  # photosize_id: foreign key, integer, not null
   # created_at
   # updated_at
 
   belongs_to :photo
-  belongs_to :filesize_type
+  belongs_to :photosize
 
   attr_accessor :saved_image
 
@@ -14,11 +14,11 @@ class Fichier < ActiveRecord::Base
 
   # get the filename
   def filename
-    if (self.filesize_type.name == 'original')
+    if (self.photosize.name == 'original')
       self.photo.filename
     else
       /^([^\.]+)\.(jpg)/i =~ self.photo.filename
-      "#{$1}_#{self.filesize_type.name}.#{$2}"
+      "#{$1}_#{self.photosize.name}.#{$2}"
     end
   end
 
@@ -31,9 +31,9 @@ class Fichier < ActiveRecord::Base
       resized_image = self.saved_image
 
       begin
-        # resize the image unless filesize_type is original
-        unless self.filesize_type.name == 'original'
-          resized_image = self.saved_image.resize_to_fit(self.filesize_type.width, self.filesize_type.height)
+        # resize the image unless photosize is original
+        unless self.photosize.name == 'original'
+          resized_image = self.saved_image.resize_to_fit(self.photosize.width, self.photosize.height)
         end
 
         # write the image to file

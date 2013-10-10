@@ -1,4 +1,4 @@
-class FilesizeType < ActiveRecord::Base
+class Photosize < ActiveRecord::Base
   # id: primary key, not null, auto increment
   # name: nvarchar(255), not null
   # created_at

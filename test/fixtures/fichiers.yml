@@ -2,8 +2,8 @@
 
 one:
   photo_id: 
-  filesize_type_id: 
+  photosize_id: 
 
 two:
   photo_id: 
-  filesize_type_id: 
+  photosize_id: 
