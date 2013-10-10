@@ -1,4 +1,7 @@
 Javer::Application.routes.draw do
+  get "member_signup/new"
+  post "member_signup/create"
+  
   get "sessions/new"
   get "sessions/create"
   get "sessions/destroy"

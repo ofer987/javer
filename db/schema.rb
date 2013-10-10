@@ -23,9 +23,17 @@ ActiveRecord::Schema.define(version: 20131006014010) do
   add_index "fichiers", ["photo_id"], name: "index_fichiers_on_photo_id"
   add_index "fichiers", ["photosize_id"], name: "index_fichiers_on_photosize_id"
 
+  create_table "filesize_types", force: true do |t|
+    t.string   "name"
+    t.integer  "width"
+    t.integer  "height"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "photos", force: true do |t|
     t.integer  "user_id"
-    t.string   "name",        default: "", null: false
+    t.string   "title",       default: "", null: false
     t.text     "description", default: "", null: false
     t.string   "filename",                 null: false
     t.datetime "taken_at"
@@ -34,14 +42,6 @@ ActiveRecord::Schema.define(version: 20131006014010) do
   end
 
   add_index "photos", ["user_id"], name: "index_photos_on_user_id"
-
-  create_table "photosizes", force: true do |t|
-    t.string   "name",       null: false
-    t.integer  "width"
-    t.integer  "height"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "user_types", force: true do |t|
     t.string   "name",       default: "", null: false

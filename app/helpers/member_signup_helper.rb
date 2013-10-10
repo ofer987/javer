@@ -1,0 +1,2 @@
+module MemberSignupHelper
+end

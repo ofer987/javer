@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   # id: primary key, not null, auto increment
+  # username: nvarchar(255), not null
   # user_type_id: foreign key, not null
   # password_digest: nvarchar(255), not null
   # first_name: nvarchar(255), not null, default: ""
@@ -15,7 +16,7 @@ class User < ActiveRecord::Base
   has_many :photos
 
   validates_presence_of :id, on: :update
-  validates_presence_of :first_name, :last_name, :user_type_id
+  validates_presence_of :username, :first_name, :last_name, :user_type_id
 
   #before_validation :init
   #before_validation :must_belong_to_user_type

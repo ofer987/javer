@@ -6,12 +6,7 @@ class CreateUserTypes < ActiveRecord::Migration
       t.timestamps
     end
 
-    UserType.create do |user_type|
-      user_type.name = 'admin'
-    end
-
-    UserType.create do |user_type|
-      user_type.name = 'member'
-    end
+    UserType.create(name: 'admin')
+    UserType.create(name: 'member')
   end
 end
