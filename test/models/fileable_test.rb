@@ -1,21 +1,23 @@
 require 'test_helper'
 
-IMAGE_SOURCE_FOLDER = Rails.root.join('test', 'assets', 'images')
-IMAGE_DESTINATION_FOLDER = Rails.root.join('test', 'website', 'images')
+IMAGE_SOURCE_FOLDER = Rails.root.join('test', 'resources', 'images')
+IMAGE_DEST_FOLDER = Rails.root.join('test', 'assets', 'images', 'photos')
 
+# For testing purposes
+# The test photos should not be mixed in the real assets folder  
 class Photo
   def photo_store
-    IMAGE_DESTINATION_FOLDER
+    IMAGE_DEST_FOLDER
   end
 end
 
 class FileableTest < ActiveSupport::TestCase
-  setup do
-    # Remove the images subdir
-    FileUtils.rm_rf(IMAGE_DESTINATION_FOLDER)
+  def teardown
+    # Remove the destination subdir
+    FileUtils.rm_rf(IMAGE_DEST_FOLDER)
 
-    # Recreate the images subdir
-    FileUtils.mkdir_p(IMAGE_DESTINATION_FOLDER)
+    # Recreate the destination subdir
+    FileUtils.mkdir_p(IMAGE_DEST_FOLDER)
   end
 
   test 'should be able to upload file' do
@@ -32,28 +34,62 @@ class FileableTest < ActiveSupport::TestCase
     photo.save
     assert photo.valid?, "#{photo.errors.full_messages}"
 
-    assert IMAGE_DESTINATION_FOLDER.opendir.any? { |file| file == photo.filename }, 'The file was not saved'
+    assert IMAGE_DEST_FOLDER.opendir.any? { |file| file == photo.filename }, 'The file was not saved'
 
     photo.fichiers.each do |fichier|
-      assert IMAGE_DESTINATION_FOLDER.opendir.any? { |file| file == fichier.filename },
+      assert IMAGE_DEST_FOLDER.opendir.any? { |file| file == fichier.filename },
              "Could not find the file (#{fichier.filename}) for photosize=#{fichier.photosize.name}"
+    end
+  end
+  
+  test 'should be able to save a new photo' do
+    new_photo = Photo.new do |photo|
+        photo.description = 'This is a beautiful new photo'
+        photo.name = "My mom's photo"
+        photo.user_id = users(:dan).to_param
+    end
+    new_photo.load_photo_file = photo_data
+        
+    assert new_photo.save, "not able to save the photo with #{IMAGE_SOURCE_FOLDER.join('DSC01740.JPG')}"
+    
+    # Assert that the fichiers exist
+    assert new_photo.fichiers.size > 0, "did not create fichiers"
+    
+    new_photo.fichiers.each do |fichier|
+      assert (File.exists? fichier.absolute_filename), 
+        "did not create the file #{fichier.absolute_filename} for photosize = #{fichier.photosize}"
     end
   end
 
   test 'should reject file that does not exist' do
     photo = Photo.new(user: users(:dan), name: 'New Photo')
     photo.load_photo_file = not_existing_photo_data
-    photo.save
+    refute photo.save, 'error: a photo with a non-existing file was created'
 
-    assert !IMAGE_DESTINATION_FOLDER.opendir.any? { |file| file == photo.filename }
+    refute IMAGE_DEST_FOLDER.opendir.any? { |file| file == 'not_real_photo.JPG' }
   end
 
   test 'should reject non-image filename' do
     photo = Photo.new(user: users(:dan), name: 'New Photo')
     photo.load_photo_file = non_image_photo_data
 
-    assert !photo.valid?, "#{photo.errors.full_messages}"
+    refute photo.valid?, "#{photo.errors.full_messages}"
   end
+  
+  test 'should delete files when destroying a photo' do
+    photo = Photo.new(user: users(:dan), name: 'New Photo')
+    photo.load_photo_file = photo_data
+    photo.save!
+    
+    # Remember the created filenames before the fichier objects are deleted
+    fichier_absolute_filenames = photo.fichiers.map &:absolute_filename
+    assert photo.destroy, "error destroying the photo"
+    
+    # Assert that the files were deleted 
+    fichier_absolute_filenames.each do |absolute_filename|
+      refute (File.exists? absolute_filename), "error deleting the file #{absolute_filename}"
+    end    
+  end  
 
   private
 

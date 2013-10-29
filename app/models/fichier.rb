@@ -10,6 +10,7 @@ class Fichier < ActiveRecord::Base
 
   attr_accessor :saved_image
 
+  before_destroy :before_destroy
   after_save :write_file
 
   # get the filename
@@ -27,6 +28,12 @@ class Fichier < ActiveRecord::Base
   end
 
   private
+    def before_destroy
+      if File.delete(File.join(self.photo.photo_store, self.filename)) == 0
+        raise "Could not delete file or file not found: #{fichier.filename}\n"
+      end 
+    end
+  
     def write_file
       resized_image = self.saved_image
 

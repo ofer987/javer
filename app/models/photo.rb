@@ -9,7 +9,7 @@ class Photo < ActiveRecord::Base
   # updated_at
 
   belongs_to :user
-  has_many :fichiers
+  has_many :fichiers, dependent: :destroy
 
   validates_presence_of :user_id
   #validates_associated :user
@@ -23,6 +23,11 @@ class Photo < ActiveRecord::Base
 
   before_create :before_create
   before_update :before_update
+
+  # Root directory of the photo public/photos
+  def photo_store
+    Rails.root.join('app', 'assets', 'images', 'photos')
+  end
 
   def select_fichier(name)
     if name.is_a? Photosize
@@ -38,11 +43,6 @@ class Photo < ActiveRecord::Base
     else
       self.select_fichier(name)
     end
-  end
-
-  # Root directory of the photo public/photos
-  def photo_store
-    Rails.root.join('app', 'assets', 'images', 'photos')
   end
 
   # "f.file_field :load_photo_file" in the view triggers Rails to invoke this method
@@ -138,11 +138,6 @@ class Photo < ActiveRecord::Base
           end
       end
     end
-  end
-
-  def init_taken_at
-    # Default value
-    self.taken_at = DateTime.now
   end
 
   def validate_has_unique_fichiers

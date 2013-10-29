@@ -1,7 +1,8 @@
 require 'test_helper'
 
 class PhotosControllerTest < ActionController::TestCase
-  IMAGE_SOURCE_FOLDER = Rails.root.join('test', 'assets', 'images')
+  IMAGE_SOURCE_FOLDER = Rails.root.join('test', 'resources', 'images')
+  IMAGE_DEST_FOLDER = Rails.root.join('test', 'assets', 'images')
 
   setup do
     @photo = photos(:building)
@@ -67,13 +68,15 @@ class PhotosControllerTest < ActionController::TestCase
 
     assert_redirected_to user_photos_path(@user)
   end
+  
+  private
 
-  def photo_data
-    ActionDispatch::Http::UploadedFile.new({
-                                               filename: 'DSC01740.JPG',
-                                               type: 'image/jpg',
-                                               tempfile: IMAGE_SOURCE_FOLDER.join('DSC01740.JPG'),
-                                               head: "Content-Disposition: form-data; name=\"photo[load_photo_file]\"; filename=\"DSC01740.JPG\"\r\nContent-Type: image/jpeg\r\n"
-                                           })
-  end
+    def photo_data
+      ActionDispatch::Http::UploadedFile.new({
+                                                 filename: 'DSC01740.JPG',
+                                                 type: 'image/jpg',
+                                                 tempfile: IMAGE_SOURCE_FOLDER.join('DSC01740.JPG'),
+                                                 head: "Content-Disposition: form-data; name=\"photo[load_photo_file]\"; filename=\"DSC01740.JPG\"\r\nContent-Type: image/jpeg\r\n"
+                                             })
+    end
 end
