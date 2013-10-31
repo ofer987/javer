@@ -31,9 +31,9 @@ class User < ActiveRecord::Base
   end
 
   def user_type=(value)
-    self[:user_type_id] = value.to_param
+    self[:user_type_id] = UserType[value].to_param
 
-    set_user_type_relation(value.name)
+    set_user_type_relation(value)
   end
 
   def sub_user

@@ -16,7 +16,7 @@ class FileableTest < ActiveSupport::TestCase
     # Remove the destination subdir
     FileUtils.rm_rf(IMAGE_DEST_FOLDER)
 
-    # Recreate the destination subdir
+    # Recreate the destination  subdir
     FileUtils.mkdir_p(IMAGE_DEST_FOLDER)
   end
 
@@ -34,8 +34,9 @@ class FileableTest < ActiveSupport::TestCase
     photo.save
     assert photo.valid?, "#{photo.errors.full_messages}"
 
-    assert IMAGE_DEST_FOLDER.opendir.any? { |file| file == photo.filename }, 'The file was not saved'
+    assert IMAGE_DEST_FOLDER.opendir.any? { |file| file == photo.filename }, "The file, #{photo.filename} was not saved"
 
+    assert photo.fichiers.size > 0, "no fichiers were created"
     photo.fichiers.each do |fichier|
       assert IMAGE_DEST_FOLDER.opendir.any? { |file| file == fichier.filename },
              "Could not find the file (#{fichier.filename}) for photosize=#{fichier.photosize.name}"
@@ -94,28 +95,40 @@ class FileableTest < ActiveSupport::TestCase
   private
 
     def photo_data
+      filename = 'DSC01740.JPG'
+      @tmpfile = Tempfile.new(filename)
+      File.open(@tmpfile.path, 'wb') do |dest_file|
+        dest_file.write(IO.read(IMAGE_SOURCE_FOLDER.join(filename)))
+      end
       ActionDispatch::Http::UploadedFile.new({
           filename: 'DSC01740.JPG',
           type: 'image/jpg',
-          tempfile: IMAGE_SOURCE_FOLDER.join('DSC01740.JPG'),
+          tempfile: @tmpfile,
           head: "Content-Disposition: form-data; name=\"photo[load_photo_file]\"; filename=\"DSC01740.JPG\"\r\nContent-Type: image/jpeg\r\n"
                                             })
     end
 
     def not_existing_photo_data
+      filename = 'not_real_photo.JPG'
+      @tmpfile = Tempfile.new(filename)
       ActionDispatch::Http::UploadedFile.new({
                                                  filename: 'not_real_photo.JPG',
                                                  type: 'image/jpg',
-                                                 tempfile: IMAGE_SOURCE_FOLDER.join('not_real_photo.JPG'),
+                                                 tempfile: @tmpfile,
                                                  head: "Content-Disposition: form-data; name=\"photo[load_photo_file]\"; filename=\"DSC01740.JPG\"\r\nContent-Type: image/jpeg\r\n"
                                              })
     end
 
     def non_image_photo_data
+      filename = 'photos.js.coffee'
+      @tmpfile = Tempfile.new(filename)
+      File.open(@tmpfile.path, 'wb') do |dest_file|
+        dest_file.write(IO.read(IMAGE_SOURCE_FOLDER.join(filename)))
+      end
       ActionDispatch::Http::UploadedFile.new({
                                                  filename: 'photos.js.coffee',
                                                  type: 'image/jpg',
-                                                 tempfile: IMAGE_SOURCE_FOLDER.join('photo.js.coffee'),
+                                                 tempfile: @tmpfile,
                                                  head: "Content-Disposition: form-data; name=\"photo[load_photo_file]\"; filename=\"DSC01740.JPG\"\r\nContent-Type: image/jpeg\r\n"
                                              })
     end

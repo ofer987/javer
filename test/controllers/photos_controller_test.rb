@@ -16,6 +16,20 @@ class PhotosControllerTest < ActionController::TestCase
         user_id: users(:dan).to_param
     }
   end
+  
+  teardown do
+    # Remove the destination subdir
+    FileUtils.rm_rf(IMAGE_DEST_FOLDER)
+
+    # Recreate the destination  subdir
+    FileUtils.mkdir_p(IMAGE_DEST_FOLDER)
+    
+    # Remove temp files
+    unless @tmpfile == nil
+      @tmpfile.close
+      @tmpfile.unlink 
+    end
+  end
 
   test "should get index" do
     get :index, user_id: users(:dan).id
@@ -72,10 +86,15 @@ class PhotosControllerTest < ActionController::TestCase
   private
 
     def photo_data
+      filename = 'DSC01740.JPG'
+      @tmpfile = Tempfile.new(filename)
+      File.open(@tmpfile.path, 'wb') do |dest_file|
+        dest_file.write(IO.read(IMAGE_SOURCE_FOLDER.join(filename)))
+      end
       ActionDispatch::Http::UploadedFile.new({
                                                  filename: 'DSC01740.JPG',
                                                  type: 'image/jpg',
-                                                 tempfile: IMAGE_SOURCE_FOLDER.join('DSC01740.JPG'),
+                                                 tempfile: @tmpfile,
                                                  head: "Content-Disposition: form-data; name=\"photo[load_photo_file]\"; filename=\"DSC01740.JPG\"\r\nContent-Type: image/jpeg\r\n"
                                              })
     end
