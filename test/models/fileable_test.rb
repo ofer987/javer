@@ -18,6 +18,9 @@ class FileableTest < ActiveSupport::TestCase
 
     # Recreate the destination  subdir
     FileUtils.mkdir_p(IMAGE_DEST_FOLDER)
+    
+    # Delete the temporary file
+    @tmpfile.unlink unless @tmpfile == nil
   end
 
   test 'should be able to upload file' do

@@ -1,7 +1,7 @@
 class PhotosController < ApplicationController
   before_action :set_user
   before_action :set_photo, only: [:show, :edit, :update, :destroy]
-  skip_before_action :authenticate, only: [:index, :show, :edit, :create, :new]
+  skip_before_action :authenticate, only: [:index, :show]
 
   # GET /photos
   # GET /photos.json
